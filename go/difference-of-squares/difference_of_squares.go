@@ -21,6 +21,5 @@ func SumOfSquares(n int) int{
 }
 
 func Difference(n int) int{
-
 	return SquareOfSums(n) - SumOfSquares(n)
 }
