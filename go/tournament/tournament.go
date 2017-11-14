@@ -11,6 +11,7 @@ import (
 )
 
 type team struct {
+	name string
 	mp, w, d, l, p int
 }
 
@@ -40,9 +41,10 @@ func (t *team) updateReverse(teamname string, outcome string){
 	}
 }
 
-//teams[teamname] ==> returns team stats
-func parseInput(scanner *bufio.Scanner) (*map[string]*team, error) {
+//returns sorted list of input
+func getInputList(scanner *bufio.Scanner) (*[]*team, error) {
 	teams := map[string]*team{} //teams[teamname] ==> returns team stats
+	//https://stackoverflow.com/questions/13101298/calling-a-pointer-method-on-a-struct-in-a-map => relevance++
 
 	for scanner.Scan() {
 
@@ -54,11 +56,11 @@ func parseInput(scanner *bufio.Scanner) (*map[string]*team, error) {
 			}
 
 			if _, ok := teams[split[0]] ; ! ok {
-				teams[split[0]] = &team{}
+				teams[split[0]] = &team{name : split[0]}
 			}
 
 			if _, ok := teams[split[1]] ; ! ok {
-				teams[split[1]] = &team{}
+				teams[split[1]] = &team{name : split[1]}
 			}
 
 			(*teams[split[0]]).updateTeam(split[0], split[2])
@@ -68,52 +70,46 @@ func parseInput(scanner *bufio.Scanner) (*map[string]*team, error) {
 		}
 	}
 
-	return &teams, nil
+	lteams := []*team{}
+	for _, v := range teams {
+		lteams = append(lteams, v)
+	}
+
+	sort.Slice(lteams, func(i, j int) bool {
+			if lteams[i].p > lteams[j].p {
+				return true
+			} else if lteams[i].p < lteams[j].p {
+				return false
+			} else {
+				return lteams[i].name < lteams[j].name
+			}
+	})
+
+	return &lteams, nil
 }
 
-func generateOutput(writer *bufio.Writer, teams *map[string]*team){
-	//bit ugly, but it does the trick
+func generateOutput(writer *bufio.Writer, teams *[]*team){
 	
-	//maps score => list of teams with that score
-	score_to_team := map[int][]string{}
-	for k, v := range *teams {
-		score_to_team[v.p] = append(score_to_team[v.p], k)
-	}
-
-	//get the different scores
-	scores := []int{}
-	for s, _ := range score_to_team {
-		scores = append(scores, s)
-	}
-
-	//sort scores
-	sort.Sort(sort.Reverse(sort.IntSlice(scores)))
 	writer.WriteString("Team                           | MP |  W |  D |  L |  P\n")
-	for _, score := range scores {
-		//sort the list of team names alphabetically
-		sort.Strings( score_to_team[score] )
-
-		for _, teamname := range score_to_team[score] {
-			team := (*teams)[teamname]
-			writer.WriteString(
-				fmt.Sprintf("%-30s |%3d |%3d |%3d |%3d |%3d\n",
-					teamname,
-					team.mp,
-					team.w,
-					team.d,
-					team.l,
-					team.p,
-				),
-			)
-		}
+	for _, tp := range *teams {
+		team := *tp //dereference
+		writer.WriteString(
+			fmt.Sprintf("%-30s |%3d |%3d |%3d |%3d |%3d\n",
+				team.name,
+				team.mp,
+				team.w,
+				team.d,
+				team.l,
+				team.p,
+			),
+		)
 	}
-	//writer.WriteString("\n")
 }
 
 func Tally(r io.Reader,w io.Writer) error{
 
 	scanner := bufio.NewScanner(r)	
-	teams, err := parseInput(scanner)
+	teams, err := getInputList(scanner)
 
 	if err != nil {
 		return err
