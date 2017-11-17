@@ -25,14 +25,18 @@ func Sublist(a, b []int) Relation {
 	}
 	
 	res := isSublist(short, long)
-	if swapped && res == "sublist"{
-		res = "superlist"
+	if res && len(short) == len(long) {
+		return "equal"
+	} else if swapped && res {
+		return "superlist"
+	}else if res {
+		return "sublist"
 	}
 
-	return res
+	return "unequal"
 }
 
-func isSublist(short, long []int) Relation{
+func isSublist(short, long []int) bool{
 	i := 0
 	j := 0
 	for i < len(long) {
@@ -45,16 +49,13 @@ func isSublist(short, long []int) Relation{
 		}
 
 		if tj == len(short) {
-			if len(short) == len(long){
-				return "equal"
-			}
-			return "sublist"
+			return true
 		}
 
 		i++
 		j = 0
 	}
 
-	return "unequal"
+	return false
 
 }
