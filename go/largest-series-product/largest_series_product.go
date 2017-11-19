@@ -21,7 +21,7 @@ func LargestSeriesProduct(input string, span int) (int, error){
 		return -1, errors.New("span must not be wider than the string itself")
 	}
 
-	return generateSubstrings(ptr, span), nil
+	return getLargestProduct(ptr, span), nil
 }
 
 
@@ -42,7 +42,7 @@ func parseString(input *string) (*[]int, error){
 	return &res, nil
 }
 
-func generateSubstrings(in *[]int, span int) int{
+func getLargestProduct(in *[]int, span int) int{
 	list := *in
 	
 	max := 0
