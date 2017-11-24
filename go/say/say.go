@@ -2,8 +2,8 @@ package say
 
 import (
 	"strconv"
-	"fmt"
 	"strings"
+//	"fmt"
 )
 
 
@@ -109,7 +109,7 @@ func Say(number int64) (string, bool){
 	nbr := strconv.Itoa(int(number)) //usage of int64 is useless, since we don't allow numbers > 999 999 999 999
 
 	pieces := cutInPieces(nbr)
-	fmt.Println(pieces)
+	//fmt.Println(pieces)
 
 	res := ""
 	for i, p := range pieces {
@@ -117,7 +117,7 @@ func Say(number int64) (string, bool){
 		pText := handlePiece(p)
 		uText := unitTypes(len(pieces) - 1 - i)
 
-		fmt.Println("\t", i, " ", p, " => *", pText, "* *", uText, "*")
+		//fmt.Println("\t", i, " ", p, " => *", pText, "* *", uText, "*")
 
 		res += pText
 
