@@ -42,6 +42,8 @@ func dozens(digit byte) string{
 		case '2' : return "twenty"
 		case '3' : return "thirty"
 		case '4' : return "forty"
+		case '5' : return "fifty"
+		case '8' : return "eighty"
 		default : return units(digit) + "ty"
 	}
 }
