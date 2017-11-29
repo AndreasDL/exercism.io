@@ -64,7 +64,7 @@ func TestCompute2Diamond(t *testing.T) {
 	assertCellValue(t, c3, 8, "c3.Value() isn't properly computed based on changed input cell value")
 }
 
-/*
+
 // Compute 1 cells can depend on other compute 1 cells.
 func TestCompute1Chain(t *testing.T) {
 	r := New()
@@ -80,6 +80,7 @@ func TestCompute1Chain(t *testing.T) {
 	inp.SetValue(9)
 	assertCellValue(t, c, 92345678, "c.Value() isn't properly computed based on changed input cell value")
 }
+
 
 // Compute 2 cells can depend on other compute 2 cells.
 func TestCompute2Tree(t *testing.T) {
@@ -106,6 +107,7 @@ func TestCompute2Tree(t *testing.T) {
 	assertCellValue(t, output, 242, "output.Value() isn't properly computed based on changed input cell values")
 }
 
+/*
 // Compute cells can have callbacks.
 func TestBasicCallback(t *testing.T) {
 	r := New()
@@ -126,6 +128,7 @@ func TestBasicCallback(t *testing.T) {
 		t.Fatalf("callback not called with proper value")
 	}
 }
+
 
 // Callbacks and only trigger on change.
 func TestOnlyCallOnChanges(t *testing.T) {
