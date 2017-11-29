@@ -6,8 +6,9 @@ type cell struct{
 	value int
 	callbacks []*func(int)
 	sheet *reactor
-	srcCell Cell
-	updatefunc func(int) int
+	srcCells []Cell
+	updatefunc1 func(int) int
+	updatefunc2 func(int,int) int //TODO clean up
 }
 
 func (c *cell) Value() int{
@@ -17,13 +18,19 @@ func (c *cell) Value() int{
 func (c *cell) SetValue(v int){
 	c.value = v
 	
-	if c.srcCell == nil { //no srcCell => input cell
+	if c.srcCells == nil || len(c.srcCells) == 0 { //no srcCell => input cell
 		c.sheet.update()	
 	}
 }
 
 func (c *cell) update(){
-	c.SetValue( c.updatefunc( c.srcCell.Value()) )
+
+	if c.updatefunc1 != nil { 
+		c.SetValue( c.updatefunc1( c.srcCells[0].Value()) ) 
+	} else if c.updatefunc2 != nil { 
+		c.SetValue(c.updatefunc2( c.srcCells[0].Value(), c.srcCells[1].Value() )) 
+	}
+	
 }
 
 type canceler struct{
@@ -83,9 +90,9 @@ func (s *reactor) CreateInput(v int) InputCell {
 
 func (s *reactor) CreateCompute1(c Cell, f func(int) int) ComputeCell{
 	cellAddr := &cell{
-		srcCell: c,
+		srcCells: []Cell{c},
 		value: f(c.Value()),
-		updatefunc: f,
+		updatefunc1: f,
 		sheet: s,
 	}
 
@@ -94,6 +101,15 @@ func (s *reactor) CreateCompute1(c Cell, f func(int) int) ComputeCell{
 	return cellAddr
 }
 
-func (s reactor) CreateCompute2(c1, c2 Cell, f func(int, int) int) ComputeCell{
-	return &cell{}
+func (s *reactor) CreateCompute2(c1, c2 Cell, f func(int, int) int) ComputeCell{
+	cellAddr := &cell{
+		srcCells: []Cell{c1, c2},
+		value: f(c1.Value(), c2.Value()),
+		updatefunc2: f,
+		sheet: s,
+	}
+
+	*(s.cells) = append(*(s.cells), cellAddr)
+
+	return cellAddr
 }
