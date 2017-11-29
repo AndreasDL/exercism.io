@@ -214,7 +214,7 @@ func TestMultipleCallbackRemoval(t *testing.T) {
 		}
 	}
 }
-/*
+
 func TestRemoveIdempotence(t *testing.T) {
 	r := New()
 	inp := r.CreateInput(1)
@@ -268,4 +268,3 @@ func TestNoCallOnDepChangesResultingInNoChange(t *testing.T) {
 		t.Fatalf("callback function called even though computed value didn't change")
 	}
 }
-*/

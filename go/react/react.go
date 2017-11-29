@@ -1,7 +1,5 @@
 package react
 
-//import "fmt"
-
 type cell struct{
 	value int
 	callbacks []*func(int)
@@ -20,7 +18,6 @@ func (c *cell) SetValue(v int){
 
 	c.value = v
 	
-
 	if c.srcCells == nil || len(c.srcCells) == 0 { //no srcCell => input cell
 		c.sheet.update()	
 	}
@@ -58,16 +55,10 @@ func (c *cell) AddCallback(f func(int)) Canceler{
 
 func (c canceler) Cancel(){
 
-	cb := make([]*func(int), len(c.cell.callbacks)-1)
-	a := 0
-	for i, f := range c.cell.callbacks {
+	cb := []*func(int){}
+	for _, f := range c.cell.callbacks {
 
-		
-		if f == c.f { 
-			a = 1
-		} else {
-			cb[i - a] = f	
-		}
+		if f != c.f { cb = append(cb, f) }
 	}
 
 	c.cell.callbacks = cb
