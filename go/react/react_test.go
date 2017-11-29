@@ -107,7 +107,7 @@ func TestCompute2Tree(t *testing.T) {
 	assertCellValue(t, output, 242, "output.Value() isn't properly computed based on changed input cell values")
 }
 
-/*
+
 // Compute cells can have callbacks.
 func TestBasicCallback(t *testing.T) {
 	r := New()
@@ -214,7 +214,7 @@ func TestMultipleCallbackRemoval(t *testing.T) {
 		}
 	}
 }
-
+/*
 func TestRemoveIdempotence(t *testing.T) {
 	r := New()
 	inp := r.CreateInput(1)

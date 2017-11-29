@@ -16,11 +16,21 @@ func (c *cell) Value() int{
 }
 
 func (c *cell) SetValue(v int){
+	doSomeCalls := c.value != v //changes ?
+
 	c.value = v
 	
+
 	if c.srcCells == nil || len(c.srcCells) == 0 { //no srcCell => input cell
 		c.sheet.update()	
 	}
+
+	if doSomeCalls {
+		for _, f := range c.callbacks {
+			(*f)(v)
+		}
+	}
+
 }
 
 func (c *cell) update(){
