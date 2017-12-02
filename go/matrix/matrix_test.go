@@ -14,7 +14,7 @@
 package matrix
 
 import (
-//	"reflect"
+	"reflect"
 	"testing"
 )
 
@@ -159,7 +159,7 @@ func TestNew(t *testing.T) {
 		}
 	}
 }
-/*
+
 func TestRows(t *testing.T) {
 	for _, test := range tests {
 		if !test.ok {
@@ -264,4 +264,3 @@ func TestSet(t *testing.T) {
 		}
 	}
 }
-*/
