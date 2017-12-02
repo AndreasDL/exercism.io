@@ -3,7 +3,6 @@ package wordy
 import (
 	"strings"
 	"strconv"
-	"fmt"
 )
 
 var commandToFunc = map[string]func(int,int) int{
@@ -23,33 +22,32 @@ func Answer(s string) (int, bool){
 	parts := strings.Split(s, " ")
 	if len(parts) < 5 { return -1, false }
 
-	//parse
-	s1, s2 := parts[2],  parts[4]
-	op := parts[3]
-	if op == "multiplied" || op == "divided" { 
-		if len(parts) < 6 { return -1, false }
-		s2 = parts[5] 
+	//parse first value
+	res, e := strconv.Atoi(parts[2])
+	if e != nil { return -1, false }
+
+	//loop over operator, value pairs !
+	ok := true
+	for i := 3 ; i < len(parts) ; i+= 2{
+		op := parts[i]
+		if op == "multiplied" || op == "divided" { i++ } //"divided by, multiplied by" 
+
+		val := parts[i+1]
+		
+		res, ok = handle(res, op, val)
+		if !ok { return -1, false }
 	}
 
-
-	return handle(
-		s1,
-		op,
-		s2,
-	)
+	return res, true
 }
 
 
 
-func handle( s1, op, s2 string) (int,bool){
-	
-	a, e1 := strconv.Atoi(s1)
-	b, e2 := strconv.Atoi(s2)
+func handle( a int, op, s2 string) (int,bool){	
+	b, e := strconv.Atoi(s2)
 	f, exists := commandToFunc[op]
 
-	fmt.Println(a, op, b)
-
-	if e1 != nil || e2 != nil || !exists { return -1, false }
+	if e != nil || !exists { return -1, false }
 
 	return f(a,b), true
 }
