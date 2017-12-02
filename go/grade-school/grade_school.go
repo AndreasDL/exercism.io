@@ -45,9 +45,7 @@ func(s *School) Enrollment() []Grade{
 	res := []Grade{}
 
 	for _, v := range s.enrollment {
-
 		sort.Strings(v.names)
-
 		res = append(res, *v)
 	}
 
