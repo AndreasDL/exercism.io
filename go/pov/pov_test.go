@@ -264,7 +264,7 @@ func TestConstruction(t *testing.T) {
 		tc.testResult(got, want, "incorrect graph construction", t)
 	}
 }
-/*
+
 func TestChangeRoot(t *testing.T) {
 	for _, tc := range testCases {
 		got := tc.graph().ChangeRoot(tc.root, "x").ArcList()
@@ -288,4 +288,3 @@ func BenchmarkConstructAndChangeRoot(b *testing.B) {
 		}
 	}
 }
-*/
