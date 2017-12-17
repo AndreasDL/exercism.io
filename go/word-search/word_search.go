@@ -26,15 +26,15 @@ func Solve(words []string, puzzle []string) (map[string][2][2]int, error){
 	)
 	filterWords(&words, positions)
 
-/*
 	//diagonal search
 	puzzleDiag := diagonalize(&puzzle)
 	find(puzzleDiag, 
 		words, 
 		positions, 
-		func(x,y,w int
+		func(x,y,w int,r bool)[2][2]int{return getDiagLocations(x,y,w,len(puzzle),r) },
+	)
 	filterWords(&words, positions)
-*/
+
 	fmt.Println(positions)
 
 	//any remaining ?
@@ -69,17 +69,17 @@ func find(fld *[]string, words []string, positions *map[string][2][2]int,
 		for y, line := range field {
 			
 			if x := strings.Index(line, w) ; x >= 0 { 
-				fmt.Println("found!", w)
+				fmt.Println("found!", w, " at ", y, x )
 				pos[w] = locator(x,y,len(w), false)
 			} else if x := strings.Index(line, reverse(w)) ; x >= 0 {
-				fmt.Println("found!", w)
+				fmt.Println("found!", w, " at ", y, x )
 				pos[w] = locator(x,y,len(w), true)
 			}
 
 		}
 	}
 }
-func getLocations(x,y,w int , transposed, reversed bool) [2][2]int{
+func getLocations(x,y,w int, transposed, reversed bool) [2][2]int{
 
 	xMin, xMax := x, x+w-1
 	yMin, yMax := y, y
@@ -149,3 +149,29 @@ func diagonalize(puzzle *[]string) *[]string{
 
 	return &res
 }
+func getDiagLocations(x,y,w,d int, reversed bool) [2][2]int{
+	xMin, yMin := x, y
+	if y < d {
+		xMin = d - y -1
+		yMin = 0
+	} else {
+		yMin = y - d +1 +x
+	}
+
+	xMax, yMax := xMin+w-1, yMin+w-1
+
+	if reversed {
+		xMin, xMax = xMax, xMin
+		yMin, yMax = yMax, yMin
+	}
+
+	return [2][2]int{
+		{xMin, yMin},
+		{xMax, yMax},
+	}
+}
+
+/*
+lua:[[7 8] [5 6]] 
+lua:[[0 -1] [2 1]] 
+*/
