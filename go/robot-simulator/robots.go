@@ -6,7 +6,6 @@ import "fmt"
 //Advance() => advance what ?
 //what if you want more than 1 robot ?
 
-// ---------------------------------------------------------------------- step1
 const (
 	N Dir = iota
 	E
