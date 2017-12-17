@@ -4,7 +4,9 @@ import "fmt"
 
 //this exercise is designed HORRIBLY, why global var Step1Robot ?
 //Advance() => advance what ?
+//what if you want more than 1 robot ?
 
+// ---------------------------------------------------------------------- step1
 const (
 	N Dir = iota
 	E
@@ -37,7 +39,6 @@ func Left(){
 func Right(){
 	Step1Robot.Dir = (Step1Robot.Dir + 1 ) % 4
 }
-
 func (d Dir) String() string{
 	switch Step1Robot.Dir {
 	case N:
