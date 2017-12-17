@@ -10,17 +10,20 @@ func Solve(words []string, puzzle []string) (map[string][2][2]int, error){
 	positions := &map[string][2][2]int{}
 
 	//horizontal search => easy
-	findHorizontal(&puzzle, words, positions)
+	find(&puzzle, words, positions, false)
 	filterWords(&words, positions)
-	fmt.Println(positions)
-	fmt.Println(words)
-	fmt.Println()
 
 	//vertical search => field
+	puzzleTransposed := transposePuzzle(&puzzle)
+	find(puzzleTransposed, words, positions, true)
+	filterWords(&words, positions)
+
+	//diagonal search
 
 
 	//any remaining ?
 	if len(words) > 0 {
+		fmt.Println(words)
 		return *positions, errors.New("not all words were found !")
 	}
 
@@ -33,7 +36,7 @@ func filterWords(words *[]string, positions *map[string][2][2]int){
 		i := 0
 		for i < len(*words) && (*words)[i] != k { i++ }
 		
-		if len(*words) > 0 && (*words)[i] == k {
+		if i < len(*words) {
 			//delete word without preserving order
 			(*words)[i] = (*words)[len(*words)-1] //replace with last element
 			(*words) = (*words)[:len(*words)-1] //resize
@@ -47,8 +50,24 @@ func reverse(s string) string{
 	}
 	return string(res)
 }
+func transposePuzzle(puzzle *[]string) *[]string{
+	p := *puzzle
 
-func findHorizontal(fld *[]string, words []string, positions *map[string][2][2]int) {
+	//input empty field
+	res := make([][]byte, len(p[0]))
+	for i := range res { res[i] = make([]byte, len(p)) }
+
+	for x, line := range p {
+		for y, c := range []byte(line) { res[y][x] = c }
+	}
+
+	output := make([]string, len(res))
+	for i, line := range res { output[i] = string(line) }
+
+	return &output
+}
+
+func find(fld *[]string, words []string, positions *map[string][2][2]int, transposed bool) {
 	field := *fld
 	pos := *positions
 
@@ -56,17 +75,32 @@ func findHorizontal(fld *[]string, words []string, positions *map[string][2][2]i
 		for y, line := range field {
 			
 			if x := strings.Index(line, w) ; x >= 0 { 
-				pos[w] = [2][2]int{
-					[2]int{x,y},
-					[2]int{x+len(w)-1,y},
-				}
+				pos[w] = getLocations(x,y,w, transposed, false)
 			} else if x := strings.Index(line, reverse(w)) ; x >= 0 {
-				pos[w] = [2][2]int{
-					[2]int{x+len(w)-1,y},
-					[2]int{x,y},
-				}
+				pos[w] = getLocations(x,y,w, transposed, true)
 			}
 
 		}
+	}
+}
+func getLocations(x,y int, w string, transposed, reversed bool) [2][2]int{
+
+	xMin, xMax := x, x+len(w)-1
+	yMin, yMax := y, y
+	
+	if transposed {
+		xMin, yMin = yMin, xMin
+		xMax, yMax = yMax, xMax
+	}
+
+	if reversed {
+		xMin, xMax = xMax, xMin
+		yMin, yMax = yMax, yMin
+	}
+
+	
+	return [2][2]int{
+		{xMin, yMin},
+		{xMax, yMax},
 	}
 }
