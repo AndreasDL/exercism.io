@@ -10,16 +10,32 @@ func Solve(words []string, puzzle []string) (map[string][2][2]int, error){
 	positions := &map[string][2][2]int{}
 
 	//horizontal search => easy
-	find(&puzzle, words, positions, false)
+	find(&puzzle, 
+		words, 
+		positions, 
+		func(x,y,w int,r bool)[2][2]int{return getLocations(x,y,w,false,r)},
+	)
 	filterWords(&words, positions)
 
 	//vertical search => field
 	puzzleTransposed := transposePuzzle(&puzzle)
-	find(puzzleTransposed, words, positions, true)
+	find(puzzleTransposed, 
+		words, 
+		positions, 
+		func(x,y,w int,r bool)[2][2]int{return getLocations(x,y,w,true,r)},
+	)
 	filterWords(&words, positions)
 
+/*
 	//diagonal search
-
+	puzzleDiag := diagonalize(&puzzle)
+	find(puzzleDiag, 
+		words, 
+		positions, 
+		func(x,y,w int
+	filterWords(&words, positions)
+*/
+	fmt.Println(positions)
 
 	//any remaining ?
 	if len(words) > 0 {
@@ -41,6 +57,47 @@ func filterWords(words *[]string, positions *map[string][2][2]int){
 			(*words)[i] = (*words)[len(*words)-1] //replace with last element
 			(*words) = (*words)[:len(*words)-1] //resize
 		}
+	}
+}
+
+func find(fld *[]string, words []string, positions *map[string][2][2]int, 
+	locator func(int,int,int,bool)[2][2]int) {
+	field := *fld
+	pos := *positions
+
+	for _, w := range words {
+		for y, line := range field {
+			
+			if x := strings.Index(line, w) ; x >= 0 { 
+				fmt.Println("found!", w)
+				pos[w] = locator(x,y,len(w), false)
+			} else if x := strings.Index(line, reverse(w)) ; x >= 0 {
+				fmt.Println("found!", w)
+				pos[w] = locator(x,y,len(w), true)
+			}
+
+		}
+	}
+}
+func getLocations(x,y,w int , transposed, reversed bool) [2][2]int{
+
+	xMin, xMax := x, x+w-1
+	yMin, yMax := y, y
+	
+	if transposed {
+		xMin, yMin = yMin, xMin
+		xMax, yMax = yMax, xMax
+	}
+
+	if reversed {
+		xMin, xMax = xMax, xMin
+		yMin, yMax = yMax, yMin
+	}
+
+	
+	return [2][2]int{
+		{xMin, yMin},
+		{xMax, yMax},
 	}
 }
 func reverse(s string) string{
@@ -67,40 +124,28 @@ func transposePuzzle(puzzle *[]string) *[]string{
 	return &output
 }
 
-func find(fld *[]string, words []string, positions *map[string][2][2]int, transposed bool) {
-	field := *fld
-	pos := *positions
+func diagonalize(puzzle *[]string) *[]string{
+	p := *puzzle
 
-	for _, w := range words {
-		for y, line := range field {
-			
-			if x := strings.Index(line, w) ; x >= 0 { 
-				pos[w] = getLocations(x,y,w, transposed, false)
-			} else if x := strings.Index(line, reverse(w)) ; x >= 0 {
-				pos[w] = getLocations(x,y,w, transposed, true)
-			}
-
+	res := make([]string, 2*len(p))
+	i := 0
+	for startX := len(p)-1; startX >= 0 ; startX, i = startX-1, i+1 {
+		
+		line := []byte{}
+		for y, x := 0, startX ; y < len(p) && x < len(p) ; y,x = y+1, x+1 {
+			line = append(line, p[y][x])
 		}
-	}
-}
-func getLocations(x,y int, w string, transposed, reversed bool) [2][2]int{
-
-	xMin, xMax := x, x+len(w)-1
-	yMin, yMax := y, y
-	
-	if transposed {
-		xMin, yMin = yMin, xMin
-		xMax, yMax = yMax, xMax
+		res[i] = string(line)
 	}
 
-	if reversed {
-		xMin, xMax = xMax, xMin
-		yMin, yMax = yMax, yMin
+	for startY := 1 ; startY < len(p) ; startY, i = startY+1, i+1 {
+
+		line := []byte{}
+		for y, x := startY, 0 ; y < len(p) && x < len(p) ; y,x = y+1, x+1 {
+			line = append(line, p[y][x])
+		}
+		res[i] = string(line)
 	}
 
-	
-	return [2][2]int{
-		{xMin, yMin},
-		{xMax, yMax},
-	}
+	return &res
 }
