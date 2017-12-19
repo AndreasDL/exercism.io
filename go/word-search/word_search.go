@@ -1,7 +1,7 @@
 package wordsearch
 
 import (
-	"fmt"
+	//"fmt"
 	"strings"
 	"errors"
 )
@@ -35,11 +35,18 @@ func Solve(words []string, puzzle []string) (map[string][2][2]int, error){
 	)
 	filterWords(&words, positions)
 
-	fmt.Println(positions)
+	//rev diagonal search
+	puzzleDiag = revDiagonalize(&puzzle)
+	find(puzzleDiag, 
+		words, 
+		positions, 
+		func(x,y,w int,r bool)[2][2]int{return getRevDiagLocations(x,y,w,len(puzzle),r) },
+	)
+	filterWords(&words, positions)
 
 	//any remaining ?
 	if len(words) > 0 {
-		fmt.Println(words)
+		//fmt.Println(words)
 		return *positions, errors.New("not all words were found !")
 	}
 
@@ -69,10 +76,8 @@ func find(fld *[]string, words []string, positions *map[string][2][2]int,
 		for y, line := range field {
 			
 			if x := strings.Index(line, w) ; x >= 0 { 
-				fmt.Println("found!", w, " at ", y, x )
 				pos[w] = locator(x,y,len(w), false)
 			} else if x := strings.Index(line, reverse(w)) ; x >= 0 {
-				fmt.Println("found!", w, " at ", y, x )
 				pos[w] = locator(x,y,len(w), true)
 			}
 
@@ -153,7 +158,7 @@ func getDiagLocations(x,y,w,d int, reversed bool) [2][2]int{
 	xMin, yMin := x, y
 	if y < d {
 		xMin = d - y -1
-		yMin = 0
+		yMin = x
 	} else {
 		yMin = y - d +1 +x
 	}
@@ -171,7 +176,49 @@ func getDiagLocations(x,y,w,d int, reversed bool) [2][2]int{
 	}
 }
 
-/*
-lua:[[7 8] [5 6]] 
-lua:[[0 -1] [2 1]] 
-*/
+func revDiagonalize(puzzle *[]string) *[]string{
+	p := *puzzle
+
+	res := make([]string, 2*len(p))
+	i := 0
+	for startX := 0; startX < len(p) ; startX, i = startX+1, i+1 {
+		
+		line := []byte{}
+		for y, x := 0, startX ; y < len(p) && x >= 0 ; y,x = y+1, x-1 {
+			line = append(line, p[y][x])
+		}
+		res[i] = reverse(string(line))
+	}
+
+	for startY := 1 ; startY < len(p) ; startY, i = startY+1, i+1 {
+
+		line := []byte{}
+		for y, x := startY, len(p)-1 ; y < len(p) && x >= 0 ; y,x = y+1, x-1 {
+			line = append(line, p[y][x])
+		}
+		res[i] = reverse(string(line))
+	}
+
+	return &res
+}
+func getRevDiagLocations(x,y,w,d int, reversed bool) [2][2]int{
+	xMin, yMin := x, y
+	if y < d {
+		yMin = y - x
+	} else {
+		xMin = x + (y-d) +1
+		yMin = d - 1 - x
+	}
+
+	xMax, yMax := xMin+w-1, yMin-w+1
+
+	if reversed {
+		xMin, xMax = xMax, xMin
+		yMin, yMax = yMax, yMin
+	}
+
+	return [2][2]int{
+		{xMin, yMin},
+		{xMax, yMax},
+	}
+}
