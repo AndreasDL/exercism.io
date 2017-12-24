@@ -14,21 +14,16 @@ type Entry struct {
 	Change      int // in cents
 }
 
-func FormatLedger(currency string, locale string, entries []Entry) (string, error) {
-
-	if len(entries) == 0 && currency != "USD"  {
-		return "", errors.New("")
-	} else if locale != "nl-NL" && locale != "en-US" {
-		return "", errors.New("")
-	}
-
+func copyAndSortEntries( entries []Entry) []Entry {
 	entriesSorted := make([]Entry, len(entries))
 	for i, e := range entries { entriesSorted[i] = e }
 	sort.Slice(entriesSorted, func(i,j int)bool{
 		return entriesSorted[j].Change > entriesSorted[i].Change
 	})
-
-	var s string
+	return entriesSorted
+}
+func generateHeader(locale string) string {
+	s := "" 
 	if locale == "nl-NL" {
 		s = "Datum" +
 			strings.Repeat(" ", 10-len("Datum")) +
@@ -44,6 +39,20 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 			strings.Repeat(" ", 25-len("Description")) +
 			" | " + "Change" + "\n"
 	}
+	return s
+}
+
+func FormatLedger(currency string, locale string, entries []Entry) (string, error) {
+
+	if len(entries) == 0 && currency != "USD"  {
+		return "", errors.New("")
+	} else if locale != "nl-NL" && locale != "en-US" {
+		return "", errors.New("")
+	}
+
+	entriesSorted := copyAndSortEntries(entries)
+	s := generateHeader(locale)
+	
 
 	// Parallelism, always a great idea
 	co := make(chan struct {
