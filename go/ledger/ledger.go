@@ -190,6 +190,8 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 				strings.Repeat(" ", 13-al) + a + "\n"}
 		}(i, et)
 	}
+
+	
 	ss := make([]string, len(entriesSorted))
 	for range entriesSorted {
 		v := <-co
