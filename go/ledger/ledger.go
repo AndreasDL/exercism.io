@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 	"sort"
+	//"fmt"
 )
 
 type Entry struct {
@@ -15,10 +16,8 @@ type Entry struct {
 
 func FormatLedger(currency string, locale string, entries []Entry) (string, error) {
 
-	if len(entries) == 0 {
-		if _, err := FormatLedger(currency, "en-US", []Entry{{Date: "2014-01-01", Description: "", Change: 0}}); err != nil {
-			return "", err
-		}
+	if len(entries) == 0 && currency != "USD" { 
+		return "", errors.New("")
 	}
 
 
