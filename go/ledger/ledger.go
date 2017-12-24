@@ -46,7 +46,7 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 		s string
 		e error
 	})
-	for i, et := range entriesSorted {
+	for i, entry := range entriesSorted {
 		go func(i int, entry Entry) {
 			if len(entry.Date) != 10 {
 				co <- struct {
@@ -188,10 +188,10 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 				e error
 			}{i: i, s: d + strings.Repeat(" ", 10-len(d)) + " | " + de + " | " +
 				strings.Repeat(" ", 13-al) + a + "\n"}
-		}(i, et)
+		}(i, entry)
 	}
 
-	
+
 	ss := make([]string, len(entriesSorted))
 	for range entriesSorted {
 		v := <-co
