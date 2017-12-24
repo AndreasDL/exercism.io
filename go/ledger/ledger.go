@@ -23,22 +23,21 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 	}
 	m1 := map[bool]int{true: 0, false: 1}
 	m2 := map[bool]int{true: -1, false: 1}
-	es := entriesCopy
-		
-	for i := 0 ; i < len(es) ; i++ {
-		first := es[i]
-		for j := i+1 ; j < len(es) ; j++ {
-			e := es[j]
+	//es := entriesCopy
+	for i, first := range entriesCopy {
+		for j := i+1 ; j < len(entriesCopy) ; j++ {
+			e := entriesCopy[j]
 
 			if (m1[e.Date == first.Date]*m2[e.Date < first.Date]*4 +
 				m1[e.Description == first.Description]*m2[e.Description < first.Description]*2 +
 				m1[e.Change == first.Change]*m2[e.Change < first.Change]*1) < 0 {
 				
-				es[i], es[j] = es[j], es[i]
+				entriesCopy[i], entriesCopy[j] = entriesCopy[j], entriesCopy[i]
 			}
 
 		}
 	}
+
 
 	var s string
 	if locale == "nl-NL" {
