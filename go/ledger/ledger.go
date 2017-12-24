@@ -14,9 +14,8 @@ type Entry struct {
 
 func FormatLedger(currency string, locale string, entries []Entry) (string, error) {
 	var entriesCopy []Entry
-	for _, e := range entries {
-		entriesCopy = append(entriesCopy, e)
-	}
+	for _, e := range entries { entriesCopy = append(entriesCopy, e) }
+
 	if len(entries) == 0 {
 		if _, err := FormatLedger(currency, "en-US", []Entry{{Date: "2014-01-01", Description: "", Change: 0}}); err != nil {
 			return "", err
@@ -25,16 +24,20 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 	m1 := map[bool]int{true: 0, false: 1}
 	m2 := map[bool]int{true: -1, false: 1}
 	es := entriesCopy
-	for len(es) > 1 {
-		first, rest := es[0], es[1:]
-		for i, e := range rest {
+		
+	for i := 0 ; i < len(es) ; i++ {
+		first := es[i]
+		for j := i+1 ; j < len(es) ; j++ {
+			e := es[j]
+
 			if (m1[e.Date == first.Date]*m2[e.Date < first.Date]*4 +
 				m1[e.Description == first.Description]*m2[e.Description < first.Description]*2 +
 				m1[e.Change == first.Change]*m2[e.Change < first.Change]*1) < 0 {
-				es[0], es[i+1] = es[i+1], es[0]
+				
+				es[i], es[j] = es[j], es[i]
 			}
+
 		}
-		es = es[1:]
 	}
 
 	var s string
