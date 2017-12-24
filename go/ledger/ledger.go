@@ -39,7 +39,7 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 	}
 
 	entriesSorted := copyAndSortEntries(entries)
-	//s := generateHeader(locale)
+	s := generateHeader(locale)
 
 	// Parallelism, always a great idea
 	co := make(chan struct {
