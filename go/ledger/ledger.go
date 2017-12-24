@@ -22,11 +22,11 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 	}
 
 
-	entriesCopy := make([]Entry, len(entries))
-	for i, e := range entries { entriesCopy[i] = e }
+	entriesSorted := make([]Entry, len(entries))
+	for i, e := range entries { entriesSorted[i] = e }
 
-	sort.Slice(entriesCopy, func(i,j int)bool{
-		return entriesCopy[j].Change > entriesCopy[i].Change
+	sort.Slice(entriesSorted, func(i,j int)bool{
+		return entriesSorted[j].Change > entriesSorted[i].Change
 	})
 
 	var s string
@@ -53,7 +53,7 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 		s string
 		e error
 	})
-	for i, et := range entriesCopy {
+	for i, et := range entriesSorted {
 		go func(i int, entry Entry) {
 			if len(entry.Date) != 10 {
 				co <- struct {
@@ -197,15 +197,15 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 				strings.Repeat(" ", 13-al) + a + "\n"}
 		}(i, et)
 	}
-	ss := make([]string, len(entriesCopy))
-	for range entriesCopy {
+	ss := make([]string, len(entriesSorted))
+	for range entriesSorted {
 		v := <-co
 		if v.e != nil {
 			return "", v.e
 		}
 		ss[v.i] = v.s
 	}
-	for i := 0; i < len(entriesCopy); i++ {
+	for i := 0; i < len(entriesSorted); i++ {
 		s += ss[i]
 	}
 	return s, nil
