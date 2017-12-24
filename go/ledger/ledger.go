@@ -26,12 +26,13 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 	m2 := map[bool]int{true: -1, false: 1}
 	for i, first := range entriesCopy {
 		for j := i+1 ; j < len(entriesCopy) ; j++ {
-			e := entriesCopy[j]
+			sec := entriesCopy[j]
 
 
-			if (m1[e.Date == first.Date]*m2[e.Date < first.Date] +
-				m1[e.Description == first.Description]*m2[e.Description < first.Description] +
-				m1[e.Change == first.Change]*m2[e.Change < first.Change] ) < 0 {
+
+			if (m1[sec.Date == first.Date]*m2[sec.Date < first.Date] +
+				m1[sec.Description == first.Description]*m2[sec.Description < first.Description] +
+				m1[sec.Change == first.Change]*m2[sec.Change < first.Change] ) < 0 {
 				
 				entriesCopy[i], entriesCopy[j] = entriesCopy[j], entriesCopy[i]
 			}
