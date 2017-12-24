@@ -5,7 +5,6 @@ import (
 	"strconv"
 	"strings"
 	"sort"
-	//"fmt"
 )
 
 type Entry struct {
@@ -23,23 +22,12 @@ func copyAndSortEntries( entries []Entry) []Entry {
 	return entriesSorted
 }
 func generateHeader(locale string) string {
-	s := "" 
 	if locale == "nl-NL" {
-		s = "Datum" +
-			strings.Repeat(" ", 10-len("Datum")) +
-			" | " +
-			"Omschrijving" +
-			strings.Repeat(" ", 25-len("Omschrijving")) +
-			" | " + "Verandering" + "\n"
+		return "Datum      | Omschrijving              | Verandering\n"
 	} else if locale == "en-US" {
-		s = "Date" +
-			strings.Repeat(" ", 10-len("Date")) +
-			" | " +
-			"Description" +
-			strings.Repeat(" ", 25-len("Description")) +
-			" | " + "Change" + "\n"
+		return "Date       | Description               | Change\n"
 	}
-	return s
+	return ""
 }
 
 func FormatLedger(currency string, locale string, entries []Entry) (string, error) {
@@ -52,7 +40,6 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 
 	entriesSorted := copyAndSortEntries(entries)
 	s := generateHeader(locale)
-	
 
 	// Parallelism, always a great idea
 	co := make(chan struct {
