@@ -200,7 +200,7 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 	}
 
 	header := generateHeader(locale)
-	for i, entry := range entriesSorted {
+	for i := 0; i < len(entriesSorted); i++ {
 		header += ss[i]
 	}
 	return header, nil
