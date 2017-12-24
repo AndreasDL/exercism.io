@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strconv"
 	"strings"
+	"sort"
 )
 
 type Entry struct {
@@ -13,8 +14,6 @@ type Entry struct {
 }
 
 func FormatLedger(currency string, locale string, entries []Entry) (string, error) {
-	entriesCopy := make([]Entry, len(entries))
-	for i, e := range entries { entriesCopy[i] = e }
 
 	if len(entries) == 0 {
 		if _, err := FormatLedger(currency, "en-US", []Entry{{Date: "2014-01-01", Description: "", Change: 0}}); err != nil {
@@ -22,16 +21,13 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 		}
 	}
 
-	for i, first := range entriesCopy {
-		for j := i+1 ; j < len(entriesCopy) ; j++ {
-			sec := entriesCopy[j]
 
-			if sec.Change <= first.Change {
-				entriesCopy[i], entriesCopy[j] = entriesCopy[j], entriesCopy[i]
-			}
-		}
-	}
+	entriesCopy := make([]Entry, len(entries))
+	for i, e := range entries { entriesCopy[i] = e }
 
+	sort.Slice(entriesCopy, func(i,j int)bool{
+		return entriesCopy[j].Change > entriesCopy[i].Change
+	})
 
 	var s string
 	if locale == "nl-NL" {
