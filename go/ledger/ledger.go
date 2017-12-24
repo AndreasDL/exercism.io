@@ -30,7 +30,6 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 
 			res := 0
 			res += m1[sec.Date == first.Date]*m2[sec.Date < first.Date]
-			res += m1[sec.Description == first.Description]*m2[sec.Description < first.Description]
 			res += m1[sec.Change == first.Change]*m2[sec.Change < first.Change]
 
 			if res < 0 {
