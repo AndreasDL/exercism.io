@@ -16,14 +16,14 @@ type Entry struct {
 
 func FormatLedger(currency string, locale string, entries []Entry) (string, error) {
 
-	if len(entries) == 0 && currency != "USD" { 
+	if len(entries) == 0 && currency != "USD"  {
+		return "", errors.New("")
+	} else if locale != "nl-NL" && locale != "en-US" {
 		return "", errors.New("")
 	}
 
-
 	entriesSorted := make([]Entry, len(entries))
 	for i, e := range entries { entriesSorted[i] = e }
-
 	sort.Slice(entriesSorted, func(i,j int)bool{
 		return entriesSorted[j].Change > entriesSorted[i].Change
 	})
@@ -43,9 +43,8 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 			"Description" +
 			strings.Repeat(" ", 25-len("Description")) +
 			" | " + "Change" + "\n"
-	} else {
-		return "", errors.New("")
 	}
+
 	// Parallelism, always a great idea
 	co := make(chan struct {
 		i int
