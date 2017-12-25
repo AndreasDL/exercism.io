@@ -50,7 +50,7 @@ func (e *Entry) formatAmount(locale, currency string) string{
 	a := "€"
 	if currency == "USD" { a = "$" }
 
-	centsStr := fmt.Sprintf("%0.3d", abs(e.Change)) 
+	centsStr := fmt.Sprintf("%0.3d", abs(e.Change))
 
 	rest := centsStr[:len(centsStr)-2]
 	var parts []string
@@ -99,7 +99,21 @@ func (e *Entry) formatAmount(locale, currency string) string{
 
 	return a
 }
+func (e *Entry) format(locale, currency string) string{
 
+	a := e.formatAmount(locale, currency)			
+	al := 0 ; for range a { al++ }
+
+	output := e.formatDate(locale)
+	output += " | "
+	output += e.formatDescription()
+	output += " | " 
+	output += strings.Repeat(" ", 13-al) 
+	output += a 
+	output += "\n"
+
+	return output
+}
 
 func abs(i int) int {
 	if i < 0 { return -i }
@@ -120,22 +134,10 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 		}
 	}
 
-	
-	fmt.Print("")
 
 	output := make([]string, len(entries))
 	for i, entry := range copyAndSortEntries(entries) {
-
-		a := entry.formatAmount(locale, currency)			
-		al := 0 ; for range a { al++ }
-
-		output[i]  = entry.formatDate(locale)
-		output[i] += " | "
-		output[i] += entry.formatDescription()
-		output[i] += " | " 
-		output[i] += strings.Repeat(" ", 13-al) 
-		output[i] += a 
-		output[i] += "\n"
+		output[i]  = entry.format(locale, currency)
 	}
 
 	header := generateHeader(locale)
