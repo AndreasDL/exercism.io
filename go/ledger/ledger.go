@@ -62,15 +62,13 @@ func (e *Entry) formatAmount(locale, currency string) string{
 		parts = append(parts, rest)
 	}
 
-	fmt.Println(centsStr, parts)
-
 	if locale == "nl-NL" {
 		a += " "
-
 		//thousand sep
 		for i := len(parts) - 1; i >= 0; i-- {
 			a += parts[i] + "."
 		}
+		
 		a = a[:len(a)-1]
 		a += ","
 		a += centsStr[len(centsStr)-2:]
