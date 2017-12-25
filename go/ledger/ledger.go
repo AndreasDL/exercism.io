@@ -115,29 +115,15 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 
 	entriesSorted := copyAndSortEntries(entries)
 	fmt.Print("")
-	// Parallelism, always a great idea
-	co := make(chan struct {
-		i int
-		s string
-		e error
-	})
+	ss := make([]string, len(entriesSorted))
 	for i, entry := range entriesSorted {
-		go func(i int, entry Entry) {
 			if len(entry.Date) != 10 {
-				co <- struct {
-					i int
-					s string
-					e error
-				}{e: errors.New("")}
+				return "", errors.New("")
 			}
 
 			d2, d4 := entry.Date[4], entry.Date[7]
 			if d2 != '-' || d4 != '-' {
-				co <- struct {
-					i int
-					s string
-					e error
-				}{e: errors.New("")}
+				return "", errors.New("")
 			}
 
 			de := entry.formatDescription()
@@ -146,24 +132,10 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 			
 			al := 0 ; for range a { al++ }
 
-			co <- struct {
-				i int
-				s string
-				e error
-			}{i: i, s: d + strings.Repeat(" ", 10-len(d)) + " | " + de + " | " +
-				strings.Repeat(" ", 13-al) + a + "\n"}
-		}(i, entry)
-	}
-
-
-	ss := make([]string, len(entriesSorted))
-	for range entriesSorted {
-		v := <-co
-		if v.e != nil {
-			return "", v.e
+			ss[i]  = d + strings.Repeat(" ", 10-len(d)) 
+			ss[i] += " | " + de + " | " 
+			ss[i] += strings.Repeat(" ", 13-al) + a + "\n"
 		}
-		ss[v.i] = v.s
-	}
 
 	header := generateHeader(locale)
 	for i := 0; i < len(entriesSorted); i++ {
