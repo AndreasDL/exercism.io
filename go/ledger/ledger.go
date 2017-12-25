@@ -59,18 +59,18 @@ func (e *Entry) formatAmount(locale, currency string) string{
 		a += "$"
 	}
 
+	centsStr := strconv.Itoa(cents)
+	switch len(centsStr) {
+	case 1:
+		centsStr = "00" + centsStr
+	case 2:
+		centsStr = "0" + centsStr
+	}
 
 	if locale == "nl-NL" {
 				
 		a += " "
-		centsStr := strconv.Itoa(cents)
-		switch len(centsStr) {
-		case 1:
-			centsStr = "00" + centsStr
-		case 2:
-			centsStr = "0" + centsStr
-		}
-
+		
 		rest := centsStr[:len(centsStr)-2]
 		var parts []string
 		for len(rest) > 3 {
@@ -92,16 +92,6 @@ func (e *Entry) formatAmount(locale, currency string) string{
 			a += " "
 		}
 	} else if locale == "en-US" {
-		if negative {
-			a = "(" + a
-		}
-		centsStr := strconv.Itoa(cents)
-		switch len(centsStr) {
-		case 1:
-			centsStr = "00" + centsStr
-		case 2:
-			centsStr = "0" + centsStr
-		}
 		rest := centsStr[:len(centsStr)-2]
 		var parts []string
 		for len(rest) > 3 {
@@ -117,12 +107,14 @@ func (e *Entry) formatAmount(locale, currency string) string{
 		a = a[:len(a)-1]
 		a += "."
 		a += centsStr[len(centsStr)-2:]
+		
 		if negative {
-			a += ")"
+			a = "(" + a + ")"
 		} else {
 			a += " "
 		}
 	}
+
 
 	return a
 }
