@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 	"sort"
+	"fmt"
 )
 
 type Entry struct {
@@ -39,7 +40,7 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 	}
 
 	entriesSorted := copyAndSortEntries(entries)
-
+	fmt.Print("")
 	// Parallelism, always a great idea
 	co := make(chan struct {
 		i int
@@ -55,7 +56,8 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 					e error
 				}{e: errors.New("")}
 			}
-			d1, d2, d3, d4, d5 := entry.Date[0:4], entry.Date[4], entry.Date[5:7], entry.Date[7], entry.Date[8:10]
+			year, d2, month, d4, day := entry.Date[0:4], entry.Date[4], entry.Date[5:7], entry.Date[7], entry.Date[8:10]
+
 			if d2 != '-' {
 				co <- struct {
 					i int
@@ -78,9 +80,9 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 			}
 			var d string
 			if locale == "nl-NL" {
-				d = d5 + "-" + d3 + "-" + d1
+				d = day + "-" + month + "-" + year
 			} else if locale == "en-US" {
-				d = d3 + "/" + d5 + "/" + d1
+				d = month + "/" + day + "/" + year
 			}
 			negative := false
 			cents := entry.Change
