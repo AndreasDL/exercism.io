@@ -35,8 +35,8 @@ func (e *Entry) formatAmount(locale, currency string) string{
 
 	centsStr := fmt.Sprintf("%0.3d", abs(e.Change))
 
-	rest := centsStr[:len(centsStr)-2]
 	var parts []string
+	rest := centsStr[:len(centsStr)-2]
 	for len(rest) > 3 {
 		parts = append(parts, rest[len(rest)-3:])
 		rest = rest[:len(rest)-3]
