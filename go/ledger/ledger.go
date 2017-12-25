@@ -68,7 +68,7 @@ func (e *Entry) formatAmount(locale, currency string) string{
 		for i := len(parts) - 1; i >= 0; i-- {
 			a += parts[i] + "."
 		}
-		
+
 		a = a[:len(a)-1]
 		a += ","
 		a += centsStr[len(centsStr)-2:]
@@ -144,10 +144,8 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 			d := entry.formatDate(locale)
 			a := entry.formatAmount(locale, currency)
 			
-			var al int
-			for range a {
-				al++
-			}
+			al := 0 ; for range a { al++ }
+
 			co <- struct {
 				i int
 				s string
