@@ -47,18 +47,10 @@ func (e *Entry) formatDate(locale string) string{
 }
 func (e *Entry) formatAmount(locale, currency string) string{
 
-	cents := e.Change
-	negative := cents < 0
-	if negative { cents = -cents }
-	
-	a := ""
-	if currency == "EUR" {
-		a += "€"
-	} else if currency == "USD" {
-		a += "$"
-	}
+	a := "€"
+	if currency == "USD" { a = "$" }
 
-	centsStr := fmt.Sprintf("%0.3d", cents) 
+	centsStr := fmt.Sprintf("%0.3d", abs(e.Change)) 
 
 	rest := centsStr[:len(centsStr)-2]
 	var parts []string
@@ -70,7 +62,7 @@ func (e *Entry) formatAmount(locale, currency string) string{
 		parts = append(parts, rest)
 	}
 
-	fmt.Println(cents, "=>", centsStr, rest, parts)
+	fmt.Println(e.Change, "=>", centsStr, rest, parts)
 
 	if locale == "nl-NL" {
 		a += " "
@@ -82,7 +74,8 @@ func (e *Entry) formatAmount(locale, currency string) string{
 		a = a[:len(a)-1]
 		a += ","
 		a += centsStr[len(centsStr)-2:]
-		if negative {
+		
+		if e.Change < 0 {
 			a += "-"
 		} else {
 			a += " "
@@ -98,7 +91,7 @@ func (e *Entry) formatAmount(locale, currency string) string{
 		a += "."
 		a += centsStr[len(centsStr)-2:]
 		
-		if negative {
+		if e.Change < 0 {
 			a = "(" + a + ")"
 		} else {
 			a += " "
@@ -109,6 +102,11 @@ func (e *Entry) formatAmount(locale, currency string) string{
 	return a
 }
 
+
+func abs(i int) int {
+	if i < 0 { return -i }
+	return i
+}
 func FormatLedger(currency string, locale string, entries []Entry) (string, error) {
 
 	if len(entries) == 0 && currency != "USD"  {
