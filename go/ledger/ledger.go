@@ -30,6 +30,13 @@ func generateHeader(locale string) string {
 	}
 	return ""
 }
+func formatDescription(de string) string{
+	if len(de) > 25 {
+		return de[:22] + "..."
+	} else {
+		return de + strings.Repeat(" ", 25-len(de))
+	}
+}
 
 func FormatLedger(currency string, locale string, entries []Entry) (string, error) {
 
@@ -66,14 +73,10 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 				}{e: errors.New("")}
 			}
 
-			de := entry.Description
-			if len(de) > 25 {
-				de = de[:22] + "..."
-			} else {
-				de = de + strings.Repeat(" ", 25-len(de))
-			}
+			de := formatDescription(entry.Description)
+			
 
-			var d string
+			d := ""
 			year, month, day := entry.Date[0:4], entry.Date[5:7], entry.Date[8:10]
 			if locale == "nl-NL" {
 				d = day + "-" + month + "-" + year
@@ -103,6 +106,7 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 				case 2:
 					centsStr = "0" + centsStr
 				}
+
 				rest := centsStr[:len(centsStr)-2]
 				var parts []string
 				for len(rest) > 3 {
