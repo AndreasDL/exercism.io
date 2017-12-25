@@ -29,46 +29,49 @@ func (e *Entry) formatDate(locale string) string{
 	return ""
 }
 func (e *Entry) formatAmount(locale, currency string) string{
-
-	a := "€"
-	if currency == "USD" { a = "$" }
-
 	centsStr := fmt.Sprintf("%0.3d", abs(e.Change))
 	
+	
+	//split into groups of 3 to fix thousands separator
 	parts := []string{}
-	leading := (len(centsStr) - 2) % 3
-	if leading > 0 { parts = append(parts, centsStr[:leading]) }
 
-	for b, e := leading, leading+3 ; e < len(centsStr) ; b,e = b+3, e+3 {
+	if leading := (len(centsStr) - 2) % 3 ; leading > 0 { 
+		parts = append(parts, centsStr[:leading]) 
+		centsStr = centsStr[leading:]
+	}
+
+	for b, e := 0, 3 ; e < len(centsStr) ; b,e = b+3, e+3 {
 		parts = append(parts, centsStr[b:e])
 	}
 
+	result := "€"
+	if currency == "USD" { result = "$" }
+
 	if locale == "nl-NL" {
-		a += " "
-		a += strings.Join(parts, ".")
-		a += ","
-		a += centsStr[len(centsStr)-2:]
+		result += " "
+		result += strings.Join(parts, ".")
+		result += ","
+		result += centsStr[len(centsStr)-2:]
 		
 		if e.Change < 0 {
-			a += "-"
+			result += "-"
 		} else {
-			a += " "
+			result += " "
 		}
 
 	} else if locale == "en-US" {
-		a += strings.Join(parts, ",")
-		a += "."
-		a += centsStr[len(centsStr)-2:]
+		result += strings.Join(parts, ",")
+		result += "."
+		result += centsStr[len(centsStr)-2:]
 		
 		if e.Change < 0 {
-			a = "(" + a + ")"
+			result = "(" + result + ")"
 		} else {
-			a += " "
+			result += " "
 		}
 	}
 
-
-	return a
+	return result
 }
 func (e *Entry) format(locale, currency string) string{
 
