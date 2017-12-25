@@ -12,23 +12,6 @@ type Entry struct {
 	Description string
 	Change      int // in cents
 }
-
-func copyAndSortEntries( entries []Entry) []Entry {
-	entriesSorted := make([]Entry, len(entries))
-	for i, e := range entries { entriesSorted[i] = e }
-	sort.Slice(entriesSorted, func(i,j int)bool{
-		return entriesSorted[j].Change > entriesSorted[i].Change
-	})
-	return entriesSorted
-}
-func generateHeader(locale string) string {
-	if locale == "nl-NL" {
-		return "Datum      | Omschrijving              | Verandering\n"
-	} else if locale == "en-US" {
-		return "Date       | Description               | Change\n"
-	}
-	return ""
-}
 func (e *Entry) formatDescription() string{
 	if len(e.Description) > 25 {
 		return e.Description[:22] + "..."
@@ -115,10 +98,27 @@ func (e *Entry) format(locale, currency string) string{
 	return output
 }
 
+func copyAndSortEntries( entries []Entry) []Entry {
+	entriesSorted := make([]Entry, len(entries))
+	for i, e := range entries { entriesSorted[i] = e }
+	sort.Slice(entriesSorted, func(i,j int)bool{
+		return entriesSorted[j].Change > entriesSorted[i].Change
+	})
+	return entriesSorted
+}
+func generateHeader(locale string) string {
+	if locale == "nl-NL" {
+		return "Datum      | Omschrijving              | Verandering\n"
+	} else if locale == "en-US" {
+		return "Date       | Description               | Change\n"
+	}
+	return ""
+}
 func abs(i int) int {
 	if i < 0 { return -i }
 	return i
 }
+
 func FormatLedger(currency string, locale string, entries []Entry) (string, error) {
 
 	//check flags
