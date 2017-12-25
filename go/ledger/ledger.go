@@ -116,33 +116,31 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 	entriesSorted := copyAndSortEntries(entries)
 	fmt.Print("")
 
-	ss := make([]string, len(entriesSorted))
-	
+	output := make([]string, len(entries))
 	for i, entry := range entriesSorted {
-			if len(entry.Date) != 10 {
-				return "", errors.New("")
-			}
-
-			d2, d4 := entry.Date[4], entry.Date[7]
-			if d2 != '-' || d4 != '-' {
-				return "", errors.New("")
-			}
-
-			a := entry.formatAmount(locale, currency)			
-			al := 0 ; for range a { al++ }
-
-			ss[i]  = entry.formatDate(locale)
-			ss[i] += " | "
-			ss[i] += entry.formatDescription()
-			ss[i] += " | " 
-			ss[i] += strings.Repeat(" ", 13-al) 
-			ss[i] += a 
-			ss[i] += "\n"
+		if len(entry.Date) != 10 {
+			return "", errors.New("")
 		}
 
-	header := generateHeader(locale)
-	for i := 0; i < len(entriesSorted); i++ {
-		header += ss[i]
+		d2, d4 := entry.Date[4], entry.Date[7]
+		if d2 != '-' || d4 != '-' {
+			return "", errors.New("")
+		}
+
+		a := entry.formatAmount(locale, currency)			
+		al := 0 ; for range a { al++ }
+
+		output[i]  = entry.formatDate(locale)
+		output[i] += " | "
+		output[i] += entry.formatDescription()
+		output[i] += " | " 
+		output[i] += strings.Repeat(" ", 13-al) 
+		output[i] += a 
+		output[i] += "\n"
 	}
+
+	header := generateHeader(locale)
+	for _, line := range output { header += line }
+
 	return header, nil
 }
