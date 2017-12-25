@@ -56,8 +56,8 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 					e error
 				}{e: errors.New("")}
 			}
-			year, d2, month, d4, day := entry.Date[0:4], entry.Date[4], entry.Date[5:7], entry.Date[7], entry.Date[8:10]
-
+			
+			d2, d4 := entry.Date[4], entry.Date[7]
 			if d2 != '-' {
 				co <- struct {
 					i int
@@ -78,7 +78,9 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 			} else {
 				de = de + strings.Repeat(" ", 25-len(de))
 			}
+
 			var d string
+			year, month, day := entry.Date[0:4], entry.Date[5:7], entry.Date[8:10]
 			if locale == "nl-NL" {
 				d = day + "-" + month + "-" + year
 			} else if locale == "en-US" {
