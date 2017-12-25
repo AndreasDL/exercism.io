@@ -30,11 +30,11 @@ func generateHeader(locale string) string {
 	}
 	return ""
 }
-func formatDescription(de string) string{
-	if len(de) > 25 {
-		return de[:22] + "..."
+func (e *Entry) formatDescription() string{
+	if len(e.Description) > 25 {
+		return e.Description[:22] + "..."
 	} else {
-		return de + strings.Repeat(" ", 25-len(de))
+		return e.Description + strings.Repeat(" ", 25-len(e.Description))
 	}
 }
 
@@ -73,7 +73,7 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 				}{e: errors.New("")}
 			}
 
-			de := formatDescription(entry.Description)
+			de := entry.formatDescription()
 			
 
 			d := ""
