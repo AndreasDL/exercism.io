@@ -135,7 +135,9 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 			ss[i] += " | "
 			ss[i] += entry.formatDescription()
 			ss[i] += " | " 
-			ss[i] += strings.Repeat(" ", 13-al) + a + "\n"
+			ss[i] += strings.Repeat(" ", 13-al) 
+			ss[i] += a 
+			ss[i] += "\n"
 		}
 
 	header := generateHeader(locale)
