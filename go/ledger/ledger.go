@@ -2,7 +2,7 @@ package ledger
 
 import (
 	"errors"
-	"strconv"
+	//"strconv"
 	"strings"
 	"sort"
 	"fmt"
@@ -59,13 +59,7 @@ func (e *Entry) formatAmount(locale, currency string) string{
 		a += "$"
 	}
 
-	centsStr := strconv.Itoa(cents)
-	switch len(centsStr) {
-	case 1:
-		centsStr = "00" + centsStr
-	case 2:
-		centsStr = "0" + centsStr
-	}
+	centsStr := fmt.Sprintf("%0.3d", cents) 
 
 	rest := centsStr[:len(centsStr)-2]
 	var parts []string
@@ -77,11 +71,12 @@ func (e *Entry) formatAmount(locale, currency string) string{
 		parts = append(parts, rest)
 	}
 
+	fmt.Println(cents, "=>", centsStr, rest, parts)
+
 	if locale == "nl-NL" {
-				
 		a += " "
-		
-		
+
+		//thousand sep
 		for i := len(parts) - 1; i >= 0; i-- {
 			a += parts[i] + "."
 		}
@@ -93,8 +88,10 @@ func (e *Entry) formatAmount(locale, currency string) string{
 		} else {
 			a += " "
 		}
+
 	} else if locale == "en-US" {
 
+		//thousand sep
 		for i := len(parts) - 1; i >= 0; i-- {
 			a += parts[i] + ","
 		}
