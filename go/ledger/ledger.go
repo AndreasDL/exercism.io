@@ -120,10 +120,7 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 	for i, entry := range entriesSorted {
 		if len(entry.Date) != 10 {
 			return "", errors.New("")
-		}
-
-		d2, d4 := entry.Date[4], entry.Date[7]
-		if d2 != '-' || d4 != '-' {
+		} else if entry.Date[4] != '-' || entry.Date[7] != '-' {
 			return "", errors.New("")
 		}
 
