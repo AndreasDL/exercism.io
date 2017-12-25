@@ -47,21 +47,22 @@ func (e *Entry) formatDate(locale string) string{
 	return ""
 }
 func (e *Entry) formatAmount(locale, currency string) string{
+
 	cents := e.Change
 	negative := cents < 0
 	if negative { cents = -cents }
 	
-	var a string
+	a := ""
+	if currency == "EUR" {
+		a += "€"
+	} else if currency == "USD" {
+		a += "$"
+	}
+
+
 	if locale == "nl-NL" {
-		
-		if currency == "EUR" {
-			a += "€"
-		} else if currency == "USD" {
-			a += "$"
-		}
-		
+				
 		a += " "
-		
 		centsStr := strconv.Itoa(cents)
 		switch len(centsStr) {
 		case 1:
@@ -92,12 +93,7 @@ func (e *Entry) formatAmount(locale, currency string) string{
 		}
 	} else if locale == "en-US" {
 		if negative {
-			a += "("
-		}
-		if currency == "EUR" {
-			a += "€"
-		} else if currency == "USD" {
-			a += "$"
+			a = "(" + a
 		}
 		centsStr := strconv.Itoa(cents)
 		switch len(centsStr) {
