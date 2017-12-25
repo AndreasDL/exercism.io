@@ -37,6 +37,15 @@ func (e *Entry) formatDescription() string{
 		return e.Description + strings.Repeat(" ", 25-len(e.Description))
 	}
 }
+func (e *Entry) formatDate(locale string) string{
+	year, month, day := e.Date[0:4], e.Date[5:7], e.Date[8:10]
+	if locale == "nl-NL" {
+		return day + "-" + month + "-" + year
+	} else if locale == "en-US" {
+		return month + "/" + day + "/" + year
+	}
+	return ""
+}
 
 func FormatLedger(currency string, locale string, entries []Entry) (string, error) {
 
@@ -74,15 +83,8 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 			}
 
 			de := entry.formatDescription()
+			d := entry.formatDate(locale)
 			
-
-			d := ""
-			year, month, day := entry.Date[0:4], entry.Date[5:7], entry.Date[8:10]
-			if locale == "nl-NL" {
-				d = day + "-" + month + "-" + year
-			} else if locale == "en-US" {
-				d = month + "/" + day + "/" + year
-			}
 
 			cents := entry.Change
 			negative := cents < 0
