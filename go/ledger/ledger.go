@@ -113,16 +113,18 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 		return "", errors.New("")
 	}
 
+	//check entries
+	for _, entry := range entries {
+		if len(entry.Date) != 10 || entry.Date[4] != '-' || entry.Date[7] != '-' {
+			return "", errors.New("")
+		}
+	}
+
 	entriesSorted := copyAndSortEntries(entries)
 	fmt.Print("")
 
 	output := make([]string, len(entries))
 	for i, entry := range entriesSorted {
-		if len(entry.Date) != 10 {
-			return "", errors.New("")
-		} else if entry.Date[4] != '-' || entry.Date[7] != '-' {
-			return "", errors.New("")
-		}
 
 		a := entry.formatAmount(locale, currency)			
 		al := 0 ; for range a { al++ }
