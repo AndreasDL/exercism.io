@@ -120,11 +120,11 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 		}
 	}
 
-	entriesSorted := copyAndSortEntries(entries)
+	
 	fmt.Print("")
 
 	output := make([]string, len(entries))
-	for i, entry := range entriesSorted {
+	for i, entry := range copyAndSortEntries(entries) {
 
 		a := entry.formatAmount(locale, currency)			
 		al := 0 ; for range a { al++ }
