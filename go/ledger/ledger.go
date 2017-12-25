@@ -62,7 +62,7 @@ func (e *Entry) formatAmount(locale, currency string) string{
 		parts = append(parts, rest)
 	}
 
-	fmt.Println(e.Change, "=>", centsStr, rest, parts)
+	fmt.Println(centsStr, parts)
 
 	if locale == "nl-NL" {
 		a += " "
