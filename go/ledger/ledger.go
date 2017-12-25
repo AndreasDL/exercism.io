@@ -121,6 +121,7 @@ func abs(i int) int {
 }
 func FormatLedger(currency string, locale string, entries []Entry) (string, error) {
 
+	//check flags
 	if len(entries) == 0 && currency != "USD"  {
 		return "", errors.New("")
 	} else if locale != "nl-NL" && locale != "en-US" {
