@@ -46,6 +46,90 @@ func (e *Entry) formatDate(locale string) string{
 	}
 	return ""
 }
+func (e *Entry) formatAmount(locale, currency string) string{
+	cents := e.Change
+	negative := cents < 0
+	if negative { cents = -cents }
+	
+	var a string
+	if locale == "nl-NL" {
+		
+		if currency == "EUR" {
+			a += "€"
+		} else if currency == "USD" {
+			a += "$"
+		}
+		
+		a += " "
+		
+		centsStr := strconv.Itoa(cents)
+		switch len(centsStr) {
+		case 1:
+			centsStr = "00" + centsStr
+		case 2:
+			centsStr = "0" + centsStr
+		}
+
+		rest := centsStr[:len(centsStr)-2]
+		var parts []string
+		for len(rest) > 3 {
+			parts = append(parts, rest[len(rest)-3:])
+			rest = rest[:len(rest)-3]
+		}
+		if len(rest) > 0 {
+			parts = append(parts, rest)
+		}
+		for i := len(parts) - 1; i >= 0; i-- {
+			a += parts[i] + "."
+		}
+		a = a[:len(a)-1]
+		a += ","
+		a += centsStr[len(centsStr)-2:]
+		if negative {
+			a += "-"
+		} else {
+			a += " "
+		}
+	} else if locale == "en-US" {
+		if negative {
+			a += "("
+		}
+		if currency == "EUR" {
+			a += "€"
+		} else if currency == "USD" {
+			a += "$"
+		}
+		centsStr := strconv.Itoa(cents)
+		switch len(centsStr) {
+		case 1:
+			centsStr = "00" + centsStr
+		case 2:
+			centsStr = "0" + centsStr
+		}
+		rest := centsStr[:len(centsStr)-2]
+		var parts []string
+		for len(rest) > 3 {
+			parts = append(parts, rest[len(rest)-3:])
+			rest = rest[:len(rest)-3]
+		}
+		if len(rest) > 0 {
+			parts = append(parts, rest)
+		}
+		for i := len(parts) - 1; i >= 0; i-- {
+			a += parts[i] + ","
+		}
+		a = a[:len(a)-1]
+		a += "."
+		a += centsStr[len(centsStr)-2:]
+		if negative {
+			a += ")"
+		} else {
+			a += " "
+		}
+	}
+
+	return a
+}
 
 func FormatLedger(currency string, locale string, entries []Entry) (string, error) {
 
@@ -84,88 +168,8 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 
 			de := entry.formatDescription()
 			d := entry.formatDate(locale)
+			a := entry.formatAmount(locale, currency)
 			
-
-			cents := entry.Change
-			negative := cents < 0
-			if negative { cents = -cents }
-			
-			var a string
-			if locale == "nl-NL" {
-				
-				if currency == "EUR" {
-					a += "€"
-				} else if currency == "USD" {
-					a += "$"
-				}
-				
-				a += " "
-				
-				centsStr := strconv.Itoa(cents)
-				switch len(centsStr) {
-				case 1:
-					centsStr = "00" + centsStr
-				case 2:
-					centsStr = "0" + centsStr
-				}
-
-				rest := centsStr[:len(centsStr)-2]
-				var parts []string
-				for len(rest) > 3 {
-					parts = append(parts, rest[len(rest)-3:])
-					rest = rest[:len(rest)-3]
-				}
-				if len(rest) > 0 {
-					parts = append(parts, rest)
-				}
-				for i := len(parts) - 1; i >= 0; i-- {
-					a += parts[i] + "."
-				}
-				a = a[:len(a)-1]
-				a += ","
-				a += centsStr[len(centsStr)-2:]
-				if negative {
-					a += "-"
-				} else {
-					a += " "
-				}
-			} else if locale == "en-US" {
-				if negative {
-					a += "("
-				}
-				if currency == "EUR" {
-					a += "€"
-				} else if currency == "USD" {
-					a += "$"
-				}
-				centsStr := strconv.Itoa(cents)
-				switch len(centsStr) {
-				case 1:
-					centsStr = "00" + centsStr
-				case 2:
-					centsStr = "0" + centsStr
-				}
-				rest := centsStr[:len(centsStr)-2]
-				var parts []string
-				for len(rest) > 3 {
-					parts = append(parts, rest[len(rest)-3:])
-					rest = rest[:len(rest)-3]
-				}
-				if len(rest) > 0 {
-					parts = append(parts, rest)
-				}
-				for i := len(parts) - 1; i >= 0; i-- {
-					a += parts[i] + ","
-				}
-				a = a[:len(a)-1]
-				a += "."
-				a += centsStr[len(centsStr)-2:]
-				if negative {
-					a += ")"
-				} else {
-					a += " "
-				}
-			} 
 			var al int
 			for range a {
 				al++
