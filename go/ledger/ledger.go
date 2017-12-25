@@ -134,14 +134,14 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 		}
 	}
 
-
+	//format entries & save in order !
 	output := make([]string, len(entries))
 	for i, entry := range copyAndSortEntries(entries) {
 		output[i]  = entry.format(locale, currency)
 	}
 
-	header := generateHeader(locale)
-	for _, line := range output { header += line }
+	//generate string
+	header := generateHeader(locale) + strings.Join(output, "")
 
 	return header, nil
 }
