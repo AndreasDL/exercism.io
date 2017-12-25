@@ -81,21 +81,21 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 				d = month + "/" + day + "/" + year
 			}
 
-			negative := false
 			cents := entry.Change
-			if cents < 0 {
-				cents = cents * -1
-				negative = true
-			}
+			negative := cents < 0
+			if negative { cents = -cents }
 			
 			var a string
 			if locale == "nl-NL" {
+				
 				if currency == "EUR" {
 					a += "€"
 				} else if currency == "USD" {
 					a += "$"
 				}
+				
 				a += " "
+				
 				centsStr := strconv.Itoa(cents)
 				switch len(centsStr) {
 				case 1:
