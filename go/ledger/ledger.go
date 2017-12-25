@@ -56,22 +56,16 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 					e error
 				}{e: errors.New("")}
 			}
-			
+
 			d2, d4 := entry.Date[4], entry.Date[7]
-			if d2 != '-' {
+			if d2 != '-' || d4 != '-' {
 				co <- struct {
 					i int
 					s string
 					e error
 				}{e: errors.New("")}
 			}
-			if d4 != '-' {
-				co <- struct {
-					i int
-					s string
-					e error
-				}{e: errors.New("")}
-			}
+
 			de := entry.Description
 			if len(de) > 25 {
 				de = de[:22] + "..."
@@ -86,24 +80,20 @@ func FormatLedger(currency string, locale string, entries []Entry) (string, erro
 			} else if locale == "en-US" {
 				d = month + "/" + day + "/" + year
 			}
+
 			negative := false
 			cents := entry.Change
 			if cents < 0 {
 				cents = cents * -1
 				negative = true
 			}
+			
 			var a string
 			if locale == "nl-NL" {
 				if currency == "EUR" {
 					a += "€"
 				} else if currency == "USD" {
 					a += "$"
-				} else {
-					co <- struct {
-						i int
-						s string
-						e error
-					}{e: errors.New("")}
 				}
 				a += " "
 				centsStr := strconv.Itoa(cents)
