@@ -34,25 +34,18 @@ func (e *Entry) formatAmount(locale, currency string) string{
 	if currency == "USD" { a = "$" }
 
 	centsStr := fmt.Sprintf("%0.3d", abs(e.Change))
+	
+	parts := []string{}
+	leading := (len(centsStr) - 2) % 3
+	if leading > 0 { parts = append(parts, centsStr[:leading]) }
 
-	var parts []string
-	rest := centsStr[:len(centsStr)-2]
-	for len(rest) > 3 {
-		parts = append(parts, rest[len(rest)-3:])
-		rest = rest[:len(rest)-3]
-	}
-	if len(rest) > 0 {
-		parts = append(parts, rest)
+	for b, e := leading, leading+3 ; e < len(centsStr) ; b,e = b+3, e+3 {
+		parts = append(parts, centsStr[b:e])
 	}
 
 	if locale == "nl-NL" {
 		a += " "
-		//thousand sep
-		for i := len(parts) - 1; i >= 0; i-- {
-			a += parts[i] + "."
-		}
-
-		a = a[:len(a)-1]
+		a += strings.Join(parts, ".")
 		a += ","
 		a += centsStr[len(centsStr)-2:]
 		
@@ -63,12 +56,7 @@ func (e *Entry) formatAmount(locale, currency string) string{
 		}
 
 	} else if locale == "en-US" {
-
-		//thousand sep
-		for i := len(parts) - 1; i >= 0; i-- {
-			a += parts[i] + ","
-		}
-		a = a[:len(a)-1]
+		a += strings.Join(parts, ",")
 		a += "."
 		a += centsStr[len(centsStr)-2:]
 		
