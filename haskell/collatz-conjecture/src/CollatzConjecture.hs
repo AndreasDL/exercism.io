@@ -1,17 +1,15 @@
 module CollatzConjecture (collatz, main) where
 
+import Data.Maybe (isNothing, fromJust)
+
 collatz :: Integer -> Maybe Integer
 collatz x
-        | val < 0 = Nothing
-        | otherwise = Just val
+        | x <= 0 = Nothing
+        | x == 1 = Just 0
+        | otherwise = Just (1 + (fromJust val))
     where 
-        val = collatz' x
-
-collatz' :: Integer -> Integer
-collatz' x
-    | x <= 0    = -1
-    | x == 1    = 0
-    | otherwise = 1 + (collatz' $ next x)
+        y = next x
+        val = collatz $ next x
 
 next :: Integer -> Integer
 next x 
