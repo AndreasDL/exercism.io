@@ -12,7 +12,7 @@ data Bearing = North
              | East
              | South
              | West
-             deriving (Eq, Show)
+             deriving (Eq, Show, Enum, Bounded)
 
 data Robot = Robot {
     bearing     :: Bearing,
@@ -30,16 +30,14 @@ simulate robot ""       = robot
 simulate robot _        = error "unknown Pattern"
 
 turnLeft :: Bearing -> Bearing
-turnLeft North = West
-turnLeft East  = North
-turnLeft South = East
-turnLeft West  = South
+turnLeft b 
+    | b == minBound = maxBound
+    | otherwise     = pred b
 
 turnRight :: Bearing -> Bearing
-turnRight North = East
-turnRight East  = South
-turnRight South = West
-turnRight West  = North
+turnRight b
+    | b == maxBound = minBound
+    | otherwise     = succ b
 
 turnRobotLeft :: Robot -> Robot
 turnRobotLeft  (Robot b c) = Robot (turnLeft  b) c
